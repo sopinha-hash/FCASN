@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jogo de Tags em A-Frame</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Cena A-Frame -->
+    <a-scene>
+      <!-- Luz da Cena -->
+      <a-light type="ambient" intensity="0.7"></a-light>
+      <a-light type="directional" position="1 1 1" intensity="0.6"></a-light>
+
+      <!-- Quadrados Flutuantes Coloridos -->
+      <a-box id="redBox" position="-3 2 -5" color="red" depth="1" height="1" width="1"></a-box>
+      <a-box id="blueBox" position="-1 2 -5" color="blue" depth="1" height="1" width="1"></a-box>
+      <a-box id="greenBox" position="1 2 -5" color="green" depth="1" height="1" width="1"></a-box>
+      <a-box id="yellowBox" position="3 2 -5" color="yellow" depth="1" height="1" width="1"></a-box>
+
+      <!-- Quadrados com Tags HTML (com texto diretamente nos quadrados) -->
+      <a-box id="htmlTag1" position="-3 0 -5" color="blue" depth="1" height="1" width="1" class="draggable">
+        <a-text value="<h1>" color="black" align="center" position="0 0.-9 0.5" scale="2 2 2"></a-text>
+      </a-box>
+      <a-box id="htmlTag2" position="-1 0 -5" color="yellow" depth="1" height="1" width="1" class="draggable">
+        <a-text value="<p>" color="black" align="center" position="0 0.-9 0.5" scale="2 2 2"></a-text>
+      </a-box>
+      <a-box id="htmlTag3" position="1 0 -5" color="red" depth="1" height="1" width="1" class="draggable">
+        <a-text value="<div>" color="black" align="center" position="0 0.-9 0.5" scale="2 2 2"></a-text>
+      </a-box>
+      <a-box id="htmlTag4" position="3 0 -5" color="green" depth="1" height="1" width="1" class="draggable">
+        <a-text value="<span>" color="black" align="center" position="0 0.-9 0.5" scale="2 2 2"></a-text>
+      </a-box>
+
+      <!-- Interação de Controle -->
+      <a-entity laser-controls="hand: right" raycaster="objects: .draggable" line="color: pink"></a-entity>
+
+      <a-camera position="0 1.6 0" look-controls></a-camera>
+    </a-scene>
+
+    <script>
+      // Adicionar interação para arrastar e soltar
+      AFRAME.registerComponent('draggable', {
+        schema: {
+            dragging: { type 'boolean', default: false }            
+        }
+        init: function () {
+          const el = this.el;
+
+          el.addEventListener('mousedown', (evt) => {
+          this.data.dragging = true; 
+          el.setAttribute('color', 'darkpink');
+          });
+
+          el.addEventListener('mouseup', () => {
+            this.data.dragging = false;
+            el.setAttribute('color', 'brown');
+          });
+
+          el.addEventListener('mouseleave', () => {
+            if (this.data.dragging) {
+              this.data.dragging = false;
+              el.setAttribute('color', 'brown');
+            }
+          })
+        }
+      });
+
+
+      //Evento mousemove para atualizar a posição durant o arrasto
+      this.el.sceneEl.addEventeListener('mousemove', (evt) => {
+        if (this.data.dragging) {
+          const intersection = this.getIntersection(evt);
+          if (intersection) {
+            el.setAttribute('position', intersection.point;
+          }
+        }
+      })
+    
+
+      getIntersection(evt {
+        const intersection = new THREE.Vector3();
+        const camera = this.el.sceneEL.camera;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2(
+          (evt.clientX / window.innerWidth) * 2 - 1,
+          -(evt.clientY / window.innerHeight) * 2 + 1
+        );
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(this.el.aceneEl.children, true);
+        if (intersects.length > 0) {
+          intersection.copy(intersects[0].point);
+          return intersection;
+        }
+        return null;
+      
+      }
+    );
+      
+    </script>
+  </body>
+</html>
